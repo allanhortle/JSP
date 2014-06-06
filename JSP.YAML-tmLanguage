@@ -1,0 +1,94 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+name: JSP
+scopeName: text.html.jsp.jstl
+fileTypes: [jsp, jspf, tag]
+uuid: 1526c0f7-23e7-4462-8906-9420bf2f80c6
+
+patterns:
+- begin: (</?)((c|fmt++)(:)([\w]+))
+  beginCaptures:
+    '1': {name: support}
+    '2': {name: support}
+    '3': {name: support}
+    '4': {name: support}
+  end: ([/>]+)
+  endCaptures:
+    '1': {name: support}
+  patterns:
+  - include: '#double-quotes'
+  - include: '#single-quotes'
+  - include: '#tag-generic-attribute'
+  - name: support
+    match: ([=])
+
+- begin: (</?)(([a-zA-Z0-9\-_]++)(:)([a-zA-Z0-9\-]++))
+  beginCaptures:
+    '1': {name: color.purple}
+    '2': {name: color.purple}
+    '3': {name: color.purple}
+    '4': {name: color.purple}
+  end: ([/>]+)
+  endCaptures:
+    '1': {name: color.purple}
+  patterns:
+  - include: '#double-quotes'
+  - include: '#single-quotes'
+  - name: color.purple
+    match: ([=])
+  - name: color.purple
+    match: \b([a-zA-Z\-:]+)
+
+
+- include: '#expression-language'
+- include: text.html.jsp
+
+
+
+repository:
+  double-quotes:
+    name: string.quoted.double.jsp
+    begin: '"'
+    beginCaptures:
+      '0': {name: punctuation.definition.string.begin.jsp}
+    end: '"'
+    endCaptures:
+      '0': {name: punctuation.definition.string.end.jsp}
+    patterns:
+    - include: '#expression-language'
+
+  el-source:
+    patterns:
+    - comment: operators that evaluate to True or False
+      name: keyword.operator.logical.el
+      match: \b(and|or|not|empty|\!|\|\||&&)|\?|\:\b
+    - name: keyword.operator.comparison.el
+      match: <\=|>\=|\=\=|<|>|\!\=|\beq\b|\bne\b
+
+  expression-language:
+    name: string.interpolated.el
+    begin: \$\{
+    beginCaptures:
+      '0': {name: punctuation.definition.interpolated.begin.el}
+    end: \}
+    endCaptures:
+      '0': {name: punctuation.definition.interpolated.end.el}
+    patterns:
+    - include: '#el-source'
+
+  single-quotes:
+    name: string.quoted.single.jsp
+    begin: "'"
+    beginCaptures:
+      '0': {name: punctuation.definition.string.begin.jsp}
+    end: "'"
+    endCaptures:
+      '0': {name: punctuation.definition.string.end.jsp}
+    patterns:
+    - include: '#expression-language'
+
+  tag-generic-attribute:
+    name: support
+    match: \b([a-zA-Z\-:]+)
+foldingStartMarker: /\*\*|\{\s*$
+foldingStopMarker: \*\*/|^\s*\}
+keyEquivalent: ^~J
